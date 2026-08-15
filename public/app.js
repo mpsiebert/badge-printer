@@ -1,0 +1,256 @@
+const ICON_CATEGORIES = [
+    { id: 'music', label: 'Music', emoji: '🎵' },
+    { id: 'books', label: 'Books', emoji: '📚' },
+    { id: 'sports', label: 'Sports', emoji: '⚽️' },
+    { id: 'art', label: 'Art', emoji: '🎨' },
+    { id: 'gaming', label: 'Gaming', emoji: '🎮' },
+    { id: 'cooking', label: 'Cooking', emoji: '🍳' },
+    { id: 'travel', label: 'Travel', emoji: '✈️' },
+    { id: 'photography', label: 'Photo', emoji: '📷' },
+    { id: 'nature', label: 'Nature', emoji: '🌿' },
+    { id: 'science', label: 'Science', emoji: '🔬' },
+    { id: 'tech', label: 'Tech', emoji: '💻' },
+    { id: 'coffee', label: 'Coffee', emoji: '☕' },
+    { id: 'pets', label: 'Pets', emoji: '🐾' },
+    { id: 'film', label: 'Film', emoji: '🎬' },
+    { id: 'dance', label: 'Dance', emoji: '💃' }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+    const firstNameInput = document.getElementById('firstName');
+    const titleInput = document.getElementById('title');
+    const customPronounsInput = document.getElementById('customPronouns');
+    const pronounChips = document.querySelectorAll('.pronoun-chip');
+    const iconGrid = document.getElementById('iconGrid');
+    const maxError = document.getElementById('maxError');
+    
+    const previewName = document.getElementById('previewName');
+    const previewPronouns = document.getElementById('previewPronouns');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewIcons = document.getElementById('previewIcons');
+    const printBtn = document.getElementById('printBtn');
+    
+    const successOverlay = document.getElementById('successOverlay');
+    const errorOverlay = document.getElementById('errorOverlay');
+    const errorMsg = document.getElementById('errorMsg');
+
+    let selectedIcons = new Set();
+    let selectedPronouns = new Set();
+    const MAX_ICONS = 6;
+
+    // Initialize Pronouns Chip Selection
+    pronounChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const val = chip.dataset.value;
+            if (selectedPronouns.has(val)) {
+                selectedPronouns.delete(val);
+                chip.classList.remove('selected');
+            } else {
+                selectedPronouns.add(val);
+                chip.classList.add('selected');
+            }
+            updatePreview();
+        });
+    });
+
+    // Helper to get formatted combined pronouns
+    function getCombinedPronouns() {
+        const chipList = Array.from(selectedPronouns);
+        const customText = customPronounsInput ? customPronounsInput.value.trim() : '';
+        if (customText) {
+            chipList.push(customText);
+        }
+        return chipList.join(', ');
+    }
+
+    // Initialize Icon Grid
+    function initGrid() {
+        iconGrid.innerHTML = '';
+        ICON_CATEGORIES.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'icon-btn';
+            btn.dataset.id = cat.id;
+            
+            const imgSrc = (cat.id === 'cooking') ? `/icons/${cat.id}.png` : `/icons/${cat.id}.svg`;
+            btn.innerHTML = `
+                <div class="icon-circle">
+                    <img src="${imgSrc}" alt="${cat.label}" onerror="this.outerHTML='${cat.emoji}'">
+                </div>
+                <span class="icon-label">${cat.label}</span>
+            `;
+            
+            btn.addEventListener('click', () => toggleIcon(cat.id, btn));
+            iconGrid.appendChild(btn);
+        });
+    }
+
+    // Toggle Icon Selection
+    function toggleIcon(id, btnElement) {
+        if (selectedIcons.has(id)) {
+            selectedIcons.delete(id);
+            btnElement.classList.remove('selected');
+        } else {
+            if (selectedIcons.size >= MAX_ICONS) {
+                btnElement.classList.add('shake');
+                maxError.style.opacity = '1';
+                
+                setTimeout(() => {
+                    btnElement.classList.remove('shake');
+                    maxError.style.opacity = '0';
+                }, 400);
+                return;
+            }
+            selectedIcons.add(id);
+            btnElement.classList.add('selected');
+        }
+        
+        updateGridState();
+        updatePreview();
+    }
+
+    // Update Grid Dimming
+    function updateGridState() {
+        if (selectedIcons.size >= MAX_ICONS) {
+            iconGrid.classList.add('max-reached');
+        } else {
+            iconGrid.classList.remove('max-reached');
+        }
+    }
+
+    // Update Live Badge Preview
+    function updatePreview() {
+        const name = firstNameInput.value.trim();
+        const pronouns = getCombinedPronouns();
+        const title = titleInput.value.trim();
+
+        previewName.textContent = name || '';
+        previewPronouns.textContent = pronouns;
+        previewTitle.textContent = title;
+
+        // Auto-scale font for long names
+        if (name.length > 10) {
+            previewName.style.fontSize = Math.max(1.8, 3.5 - (name.length - 10) * 0.2) + 'rem';
+        } else {
+            previewName.style.fontSize = '3.5rem';
+        }
+
+        // Update preview icons
+        previewIcons.innerHTML = '';
+        Array.from(selectedIcons).forEach(id => {
+            const cat = ICON_CATEGORIES.find(c => c.id === id);
+            if (cat) {
+                const iconItem = document.createElement('div');
+                iconItem.className = 'badge-icon-item';
+                const imgSrc = (id === 'cooking') ? `/icons/${id}.png` : `/icons/${id}.svg`;
+                iconItem.innerHTML = `<img src="${imgSrc}" alt="${cat.label}">`;
+                previewIcons.appendChild(iconItem);
+            }
+        });
+
+        // Enable/disable print button
+        printBtn.disabled = name.length === 0;
+    }
+
+    // Input listeners
+    firstNameInput.addEventListener('input', updatePreview);
+    titleInput.addEventListener('input', updatePreview);
+    if (customPronounsInput) {
+        customPronounsInput.addEventListener('input', updatePreview);
+    }
+
+    // Enter key to print
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !printBtn.disabled) {
+            if (successOverlay.classList.contains('hidden') && errorOverlay.classList.contains('hidden')) {
+                printBadge();
+            }
+        }
+    });
+
+    // Print button
+    printBtn.addEventListener('click', printBadge);
+
+    const PRINT_BTN_DEFAULT = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Print Badge
+    `;
+
+    async function printBadge() {
+        const name = firstNameInput.value.trim();
+        const pronouns = getCombinedPronouns();
+        const title = titleInput.value.trim();
+        const icons = Array.from(selectedIcons);
+
+        if (!name) return;
+
+        printBtn.disabled = true;
+        printBtn.innerHTML = '<span class="loading">Printing...</span>';
+
+        try {
+            // Build icon URLs for selected icons
+            const iconUrls = icons.map(id => (id === 'cooking') ? `/icons/${id}.png` : `/icons/${id}.svg`);
+
+            // Render the entire badge as a bitmap and convert to ZPL
+            const zpl = await renderBadgeToZPL({ name, pronouns, title, iconUrls });
+
+            // Determine print endpoint (local vs GitHub Pages)
+            const printApiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                ? '/api/print'
+                : 'http://localhost:3000/api/print';
+
+            // Send pre-rendered ZPL to server
+            const response = await fetch(printApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ zpl })
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Failed to print');
+            }
+
+            // Show success
+            successOverlay.classList.remove('hidden');
+            
+            // Auto reset after 4 seconds
+            setTimeout(() => {
+                resetForm();
+                successOverlay.classList.add('hidden');
+            }, 4000);
+
+        } catch (error) {
+            console.error(error);
+            errorMsg.textContent = error.message || 'Something went wrong. Please try again.';
+            errorOverlay.classList.remove('hidden');
+            
+            setTimeout(() => {
+                errorOverlay.classList.add('hidden');
+            }, 3000);
+        } finally {
+            printBtn.innerHTML = PRINT_BTN_DEFAULT;
+            updatePreview();
+        }
+    }
+
+    function resetForm() {
+        firstNameInput.value = '';
+        titleInput.value = '';
+        if (customPronounsInput) customPronounsInput.value = '';
+        selectedPronouns.clear();
+        selectedIcons.clear();
+        
+        pronounChips.forEach(chip => chip.classList.remove('selected'));
+        document.querySelectorAll('.icon-btn').forEach(btn => {
+            btn.classList.remove('selected', 'shake');
+        });
+        
+        updateGridState();
+        updatePreview();
+        firstNameInput.focus();
+    }
+
+    // Init
+    initGrid();
+    updatePreview();
+    firstNameInput.focus();
+});

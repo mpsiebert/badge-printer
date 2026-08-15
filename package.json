@@ -1,0 +1,13 @@
+{
+  "name": "badge-printer",
+  "version": "1.0.0",
+  "description": "Self-service name badge printer kiosk for Zebra ZD220",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0"
+  }
+}

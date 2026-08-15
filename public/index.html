@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Make Your Badge</title>
+    <meta name="description" content="Self-service badge printing kiosk">
+    <!-- Inter font bundled locally for offline use -->
+    <link rel="stylesheet" href="fonts/inter.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="kiosk-container">
+        <div class="card">
+            <header>
+                <h1>Make Your Badge</h1>
+                <p>Please enter your details to print your badge.</p>
+            </header>
+
+            <div class="layout-grid">
+                <!-- Form Section -->
+                <section class="form-section">
+                    <div class="input-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" placeholder="e.g. Alex" autocomplete="off" maxlength="20" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="title">Title / Company <span class="optional">(optional)</span></label>
+                        <input type="text" id="title" placeholder="e.g. Software Engineer, Acme Corp" autocomplete="off" maxlength="36">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Pronouns <span class="optional">(optional — select any or type custom)</span></label>
+                        <div class="pronouns-chip-group" id="pronounChips">
+                            <button type="button" class="pronoun-chip" data-value="she/her">she/her</button>
+                            <button type="button" class="pronoun-chip" data-value="he/him">he/him</button>
+                            <button type="button" class="pronoun-chip" data-value="they/them">they/them</button>
+                            <button type="button" class="pronoun-chip" data-value="any/all">any/all</button>
+                        </div>
+                        <input type="text" id="customPronouns" class="custom-pronouns-input" placeholder="Or type custom (e.g. ze/hir)" autocomplete="off" maxlength="24">
+                    </div>
+
+                    <div class="interests-section">
+                        <label>Want to add any icons to describe yourself? <span class="subtitle">(optional — pick up to 6)</span></label>
+                        <div class="icon-grid" id="iconGrid">
+                            <!-- Icons injected by app.js -->
+                        </div>
+                        <div id="maxError" class="max-error-msg">Maximum 6 interests allowed</div>
+                    </div>
+                </section>
+
+                <!-- Preview Section -->
+                <section class="preview-section">
+                    <label>Badge Preview</label>
+                    <div class="badge-preview-container">
+                        <div class="badge-preview" id="badgePreview">
+                            <div class="badge-content">
+                                <div class="badge-name" id="previewName"></div>
+                                <div class="badge-title" id="previewTitle"></div>
+                                <div class="badge-pronouns" id="previewPronouns"></div>
+                            </div>
+                            <div class="badge-icons" id="previewIcons">
+                                <!-- Preview icons injected by app.js -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer>
+                <button id="printBtn" class="print-btn" disabled>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Print Badge
+                </button>
+            </footer>
+        </div>
+    </main>
+
+    <!-- Success Overlay -->
+    <div id="successOverlay" class="overlay hidden">
+        <div class="success-card">
+            <div class="check-circle">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h2>Badge Printed!</h2>
+            <p>Please take your badge below.</p>
+        </div>
+    </div>
+    
+    <!-- Error Overlay -->
+    <div id="errorOverlay" class="overlay hidden">
+        <div class="error-card">
+            <div class="error-circle">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h2>Printing Failed</h2>
+            <p id="errorMsg">Something went wrong. Please try again.</p>
+        </div>
+    </div>
+
+    <script src="icon-to-zpl.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
