@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 basePath += '/';
             }
         }
-        const ext = (id === 'cooking') ? 'png' : 'svg';
+        const ext = (id === 'cooking' || id === 'travel') ? 'png' : 'svg';
         return `${basePath}icons/${id}.${ext}`;
     }
 
