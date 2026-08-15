@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.className = 'icon-btn';
             btn.dataset.id = cat.id;
             
-            const imgSrc = (cat.id === 'cooking') ? `/icons/${cat.id}.png` : `/icons/${cat.id}.svg`;
+            const imgSrc = (cat.id === 'cooking') ? `icons/${cat.id}.png` : `icons/${cat.id}.svg`;
             btn.innerHTML = `
                 <div class="icon-circle">
                     <img src="${imgSrc}" alt="${cat.label}" onerror="this.outerHTML='${cat.emoji}'">
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cat) {
                 const iconItem = document.createElement('div');
                 iconItem.className = 'badge-icon-item';
-                const imgSrc = (id === 'cooking') ? `/icons/${id}.png` : `/icons/${id}.svg`;
+                const imgSrc = (id === 'cooking') ? `icons/${id}.png` : `icons/${id}.svg`;
                 iconItem.innerHTML = `<img src="${imgSrc}" alt="${cat.label}">`;
                 previewIcons.appendChild(iconItem);
             }
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Build icon URLs for selected icons
-            const iconUrls = icons.map(id => (id === 'cooking') ? `/icons/${id}.png` : `/icons/${id}.svg`);
+            const iconUrls = icons.map(id => (id === 'cooking') ? `icons/${id}.png` : `icons/${id}.svg`);
 
             // Render the entire badge as a bitmap and convert to ZPL
             const zpl = await renderBadgeToZPL({ name, pronouns, title, iconUrls });

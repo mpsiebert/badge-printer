@@ -4,28 +4,28 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/inter-400.ttf') format('truetype');
+  src: url('inter-400.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/fonts/inter-500.ttf') format('truetype');
+  src: url('inter-500.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/inter-600.ttf') format('truetype');
+  src: url('inter-600.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/inter-700.ttf') format('truetype');
+  src: url('inter-700.ttf') format('truetype');
 }
 
 /* Open Sans — used for badge label rendering */
@@ -34,26 +34,26 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/opensans-400.ttf') format('truetype');
+  src: url('opensans-400.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/opensans-600.ttf') format('truetype');
+  src: url('opensans-600.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/opensans-700.ttf') format('truetype');
+  src: url('opensans-700.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url('/fonts/opensans-800.ttf') format('truetype');
+  src: url('opensans-800.ttf') format('truetype');
 }
