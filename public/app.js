@@ -63,6 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return chipList.join(', ');
     }
 
+    // Helper for robust icon path resolution across localhost & GitHub Pages (handles missing trailing slashes)
+    function getIconUrl(id) {
+        let basePath = window.location.pathname;
+        if (!basePath.endsWith('/')) {
+            if (basePath.includes('.')) {
+                basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+            } else {
+                basePath += '/';
+            }
+        }
+        const ext = (id === 'cooking') ? 'png' : 'svg';
+        return `${basePath}icons/${id}.${ext}`;
+    }
+
     // Initialize Icon Grid
     function initGrid() {
         iconGrid.innerHTML = '';
@@ -71,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.className = 'icon-btn';
             btn.dataset.id = cat.id;
             
-            const imgSrc = (cat.id === 'cooking') ? `icons/${cat.id}.png` : `icons/${cat.id}.svg`;
+            const imgSrc = getIconUrl(cat.id);
             btn.innerHTML = `
                 <div class="icon-circle">
                     <img src="${imgSrc}" alt="${cat.label}" onerror="this.outerHTML='${cat.emoji}'">
@@ -141,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cat) {
                 const iconItem = document.createElement('div');
                 iconItem.className = 'badge-icon-item';
-                const imgSrc = (id === 'cooking') ? `icons/${id}.png` : `icons/${id}.svg`;
+                const imgSrc = getIconUrl(id);
                 iconItem.innerHTML = `<img src="${imgSrc}" alt="${cat.label}">`;
                 previewIcons.appendChild(iconItem);
             }
@@ -188,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Build icon URLs for selected icons
-            const iconUrls = icons.map(id => (id === 'cooking') ? `icons/${id}.png` : `icons/${id}.svg`);
+            const iconUrls = icons.map(id => getIconUrl(id));
 
             // Render the entire badge as a bitmap and convert to ZPL
             const zpl = await renderBadgeToZPL({ name, pronouns, title, iconUrls });
