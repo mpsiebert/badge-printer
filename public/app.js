@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedIcons = new Set();
     let selectedPronouns = new Set();
     let selectedGenres = new Set();
-    const MAX_ICONS = 6;
+    const MAX_ICONS = 4;
 
     // Initialize Pronouns Chip Selection
     pronounChips.forEach(chip => {
