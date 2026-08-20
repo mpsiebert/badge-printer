@@ -186,10 +186,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Auto-scale font for long names
-        if (name.length > 8) {
-            previewName.style.fontSize = Math.max(1.0, 1.8 - (name.length - 8) * 0.08) + 'rem';
+        if (name.length > 7) {
+            previewName.style.fontSize = Math.max(1.2, 2.2 - (name.length - 7) * 0.1) + 'rem';
         } else {
-            previewName.style.fontSize = '1.8rem';
+            previewName.style.fontSize = '2.2rem';
         }
 
         // Update preview icons

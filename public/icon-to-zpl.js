@@ -4,6 +4,7 @@
  * Optimized for 2" x 1" Direct Thermal Labels (DT21-15PDT)
  * 
  * Badge: 2" x 1" at 203 dpi = 406 x 203 dots
+ * Layout: Large text on left, stacked icons vertically on right edge.
  */
 
 const BADGE_WIDTH = 406;
@@ -57,11 +58,11 @@ function pixelsToZPLGF(imageData, width, height, posX, posY) {
  * @param {Object} options
  * @param {string} options.name - First name
  * @param {string} [options.pronouns] - Pronouns
- * @param {string} [options.title] - Title or Company
+ * @param {string} [options.title] - Hackathon / Community
  * @param {string[]} [options.iconUrls] - Array of icon image URLs
  * @returns {Promise<string>} Complete ZPL string ready to send to printer
  */
-async function renderBadgeToZPL({ name, pronouns, title, genres, iconUrls = [] }) {
+async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
   const canvas = document.createElement('canvas');
   canvas.width = BADGE_WIDTH;
   canvas.height = BADGE_HEIGHT;
@@ -71,75 +72,63 @@ async function renderBadgeToZPL({ name, pronouns, title, genres, iconUrls = [] }
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, BADGE_WIDTH, BADGE_HEIGHT);
 
-  // Layout config for 2" x 1" (406 x 203)
-  const leftMargin = 20;
-  const maxRightMargin = 20;
-  const maxAvailableWidth = BADGE_WIDTH - leftMargin - maxRightMargin;
-
   const hasPronouns = pronouns && pronouns.trim() !== '';
   const hasTitle = title && title.trim() !== '';
-  const hasGenres = genres && genres.trim() !== '';
   const hasIcons = iconUrls.length > 0;
+
+  // Layout config for 2" x 1" (406 x 203)
+  const leftMargin = 16;
+  const iconSize = 34;
+  const iconGap = 6;
+  const reservedRightWidth = hasIcons ? (iconSize + 20) : 16;
+  const maxAvailableWidth = BADGE_WIDTH - leftMargin - reservedRightWidth;
 
   ctx.fillStyle = 'black';
   ctx.textBaseline = 'top';
 
   // --- Auto-size Name ---
-  let nameFontSize = 54;
+  let nameFontSize = 74;
   ctx.font = `800 ${nameFontSize}px "${BADGE_FONT}", sans-serif`;
   let nameMetrics = ctx.measureText(name);
 
-  while (nameMetrics.width > maxAvailableWidth && nameFontSize > 20) {
+  while (nameMetrics.width > maxAvailableWidth && nameFontSize > 28) {
     nameFontSize -= 2;
     ctx.font = `800 ${nameFontSize}px "${BADGE_FONT}", sans-serif`;
     nameMetrics = ctx.measureText(name);
   }
 
   // --- Font sizes for optional fields ---
-  let pronounsFontSize = Math.max(14, Math.floor(nameFontSize * 0.38));
+  let titleFontSize = Math.max(22, Math.floor(nameFontSize * 0.44));
+  if (hasTitle) {
+    ctx.font = `700 ${titleFontSize}px "${BADGE_FONT}", sans-serif`;
+    let titleMetrics = ctx.measureText(title);
+    while (titleMetrics.width > maxAvailableWidth && titleFontSize > 15) {
+      titleFontSize -= 1;
+      ctx.font = `700 ${titleFontSize}px "${BADGE_FONT}", sans-serif`;
+      titleMetrics = ctx.measureText(title);
+    }
+  }
+
+  let pronounsFontSize = Math.max(20, Math.floor(nameFontSize * 0.40));
   if (hasPronouns) {
     ctx.font = `600 ${pronounsFontSize}px "${BADGE_FONT}", sans-serif`;
     let pronounsMetrics = ctx.measureText(pronouns);
-    while (pronounsMetrics.width > maxAvailableWidth && pronounsFontSize > 11) {
+    while (pronounsMetrics.width > maxAvailableWidth && pronounsFontSize > 14) {
       pronounsFontSize -= 1;
       ctx.font = `600 ${pronounsFontSize}px "${BADGE_FONT}", sans-serif`;
       pronounsMetrics = ctx.measureText(pronouns);
     }
   }
 
-  let titleFontSize = Math.max(14, Math.floor(nameFontSize * 0.35));
-  if (hasTitle) {
-    ctx.font = `600 ${titleFontSize}px "${BADGE_FONT}", sans-serif`;
-    let titleMetrics = ctx.measureText(title);
-    while (titleMetrics.width > maxAvailableWidth && titleFontSize > 11) {
-      titleFontSize -= 1;
-      ctx.font = `600 ${titleFontSize}px "${BADGE_FONT}", sans-serif`;
-      titleMetrics = ctx.measureText(title);
-    }
-  }
-
-  let genresFontSize = Math.max(12, Math.floor(nameFontSize * 0.30));
-  if (hasGenres) {
-    ctx.font = `600 ${genresFontSize}px "${BADGE_FONT}", sans-serif`;
-    let genresMetrics = ctx.measureText(genres);
-    while (genresMetrics.width > maxAvailableWidth && genresFontSize > 10) {
-      genresFontSize -= 1;
-      ctx.font = `600 ${genresFontSize}px "${BADGE_FONT}", sans-serif`;
-      genresMetrics = ctx.measureText(genres);
-    }
-  }
-
-  // Vertical layout math
+  // Vertical layout math for left column text
   const nameBlockHeight = nameFontSize;
-  const pronounsBlockHeight = hasPronouns ? pronounsFontSize + 2 : 0;
-  const titleBlockHeight = hasTitle ? titleFontSize + 2 : 0;
-  const genresBlockHeight = hasGenres ? genresFontSize + 2 : 0;
-  const iconBlockHeight = hasIcons ? 28 + 4 : 0;
+  const titleBlockHeight = hasTitle ? titleFontSize + 4 : 0;
+  const pronounsBlockHeight = hasPronouns ? pronounsFontSize + 4 : 0;
 
-  const totalContentHeight = nameBlockHeight + pronounsBlockHeight + titleBlockHeight + genresBlockHeight + iconBlockHeight;
+  const totalTextHeight = nameBlockHeight + titleBlockHeight + pronounsBlockHeight;
 
-  let nameY = Math.floor((BADGE_HEIGHT - totalContentHeight) / 2);
-  nameY = Math.max(8, nameY);
+  let nameY = Math.floor((BADGE_HEIGHT - totalTextHeight) / 2);
+  nameY = Math.max(10, nameY);
 
   // Draw name
   ctx.fillStyle = 'black';
@@ -148,44 +137,36 @@ async function renderBadgeToZPL({ name, pronouns, title, genres, iconUrls = [] }
 
   let currentY = nameY + nameFontSize + 2;
 
-  // Draw title / organization
+  // Draw Hackathon / Community
   if (hasTitle) {
-    ctx.fillStyle = '#333333';
-    ctx.font = `600 ${titleFontSize}px "${BADGE_FONT}", sans-serif`;
+    ctx.fillStyle = '#1e293b';
+    ctx.font = `700 ${titleFontSize}px "${BADGE_FONT}", sans-serif`;
     ctx.fillText(title, leftMargin + 1, currentY);
-    currentY += titleFontSize + 2;
+    currentY += titleFontSize + 4;
   }
 
   // Draw pronouns
   if (hasPronouns) {
-    ctx.fillStyle = '#555555';
+    ctx.fillStyle = '#475569';
     ctx.font = `600 ${pronounsFontSize}px "${BADGE_FONT}", sans-serif`;
     ctx.fillText(pronouns, leftMargin + 1, currentY);
-    currentY += pronounsFontSize + 2;
+    currentY += pronounsFontSize + 4;
   }
 
-  // Draw genres
-  if (hasGenres) {
-    ctx.fillStyle = '#475569';
-    ctx.font = `600 ${genresFontSize}px "${BADGE_FONT}", sans-serif`;
-    ctx.fillText(genres, leftMargin + 1, currentY);
-    currentY += genresFontSize + 2;
-  }
-
-  // Draw icons
+  // --- Draw icons stacked vertically down the right edge ---
   if (hasIcons) {
-    currentY += 3;
-    const iconSize = 28;
-    const iconGap = 8;
-    let iconX = leftMargin + 1;
+    const numIcons = Math.min(iconUrls.length, 4);
+    const totalIconsHeight = numIcons * iconSize + (numIcons - 1) * iconGap;
+    let iconY = Math.max(10, Math.floor((BADGE_HEIGHT - totalIconsHeight) / 2));
+    const iconX = BADGE_WIDTH - 14 - iconSize;
 
-    for (const url of iconUrls) {
+    for (let i = 0; i < numIcons; i++) {
       try {
-        const img = await loadImageAsync(url);
-        ctx.drawImage(img, iconX, currentY, iconSize, iconSize);
-        iconX += iconSize + iconGap;
+        const img = await loadImageAsync(iconUrls[i]);
+        ctx.drawImage(img, iconX, iconY, iconSize, iconSize);
+        iconY += iconSize + iconGap;
       } catch (e) {
-        console.warn(`Could not load icon: ${url}`);
+        console.warn(`Could not load icon: ${iconUrls[i]}`);
       }
     }
   }
