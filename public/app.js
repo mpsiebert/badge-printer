@@ -255,10 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Render the entire badge as a bitmap and convert to ZPL
             const zpl = await renderBadgeToZPL({ name, pronouns, title, genres, iconUrls });
 
-            // Determine print endpoint (local vs GitHub Pages)
-            const printApiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-                ? '/api/print'
-                : 'http://localhost:3000/api/print';
+            // Determine print endpoint (relative path for local LAN & localhost, fallback for static hosting)
+            const printApiUrl = window.location.hostname.includes('github.io')
+                ? 'http://localhost:3000/api/print'
+                : '/api/print';
 
             // Send pre-rendered ZPL to server
             const response = await fetch(printApiUrl, {
