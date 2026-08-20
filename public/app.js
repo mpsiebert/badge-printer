@@ -6,7 +6,7 @@ const ICON_CATEGORIES = [
     { id: 'gaming', label: 'Gaming', emoji: '🎮' },
     { id: 'cooking', label: 'Cooking', emoji: '🍳' },
     { id: 'travel', label: 'Travel', emoji: '✈️' },
-    { id: 'photography', label: 'Photo', emoji: '📷' },
+    { id: 'photography', label: 'Photography', emoji: '📷' },
     { id: 'nature', label: 'Nature', emoji: '🌿' },
     { id: 'science', label: 'Science', emoji: '🔬' },
     { id: 'tech', label: 'Tech', emoji: '💻' },
