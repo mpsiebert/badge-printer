@@ -187,9 +187,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Auto-scale font for long names
         if (name.length > 7) {
-            previewName.style.fontSize = Math.max(1.2, 2.2 - (name.length - 7) * 0.1) + 'rem';
+            previewName.style.fontSize = Math.max(1.3, 2.5 - (name.length - 7) * 0.12) + 'rem';
         } else {
-            previewName.style.fontSize = '2.2rem';
+            previewName.style.fontSize = '2.5rem';
         }
 
         // Update preview icons

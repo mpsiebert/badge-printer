@@ -4,7 +4,7 @@
  * Optimized for 2" x 1" Direct Thermal Labels (DT21-15PDT)
  * 
  * Badge: 2" x 1" at 203 dpi = 406 x 203 dots
- * Layout: Large text on left, stacked icons vertically on right edge.
+ * Layout: Large text on left with letter spacing, stacked icons vertically on right edge.
  */
 
 const BADGE_WIDTH = 406;
@@ -86,8 +86,11 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
   ctx.fillStyle = 'black';
   ctx.textBaseline = 'top';
 
-  // --- Auto-size Name ---
-  let nameFontSize = 74;
+  // --- Auto-size Name with Letter Spacing ---
+  let nameFontSize = 84;
+  if ('letterSpacing' in ctx) {
+    ctx.letterSpacing = '2px';
+  }
   ctx.font = `800 ${nameFontSize}px "${BADGE_FONT}", sans-serif`;
   let nameMetrics = ctx.measureText(name);
 
@@ -98,6 +101,10 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
   }
 
   // --- Font sizes for optional fields ---
+  if ('letterSpacing' in ctx) {
+    ctx.letterSpacing = '0px';
+  }
+
   let titleFontSize = Math.max(22, Math.floor(nameFontSize * 0.44));
   if (hasTitle) {
     ctx.font = `700 ${titleFontSize}px "${BADGE_FONT}", sans-serif`;
@@ -128,12 +135,19 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
   const totalTextHeight = nameBlockHeight + titleBlockHeight + pronounsBlockHeight;
 
   let nameY = Math.floor((BADGE_HEIGHT - totalTextHeight) / 2);
-  nameY = Math.max(10, nameY);
+  nameY = Math.max(8, nameY);
 
-  // Draw name
+  // Draw name with letter spacing
   ctx.fillStyle = 'black';
+  if ('letterSpacing' in ctx) {
+    ctx.letterSpacing = '2px';
+  }
   ctx.font = `800 ${nameFontSize}px "${BADGE_FONT}", sans-serif`;
   ctx.fillText(name, leftMargin, nameY);
+
+  if ('letterSpacing' in ctx) {
+    ctx.letterSpacing = '0px';
+  }
 
   let currentY = nameY + nameFontSize + 2;
 

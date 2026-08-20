@@ -415,11 +415,12 @@ input[type="text"]:focus {
 
 .badge-name {
     font-family: 'Open Sans', sans-serif;
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 800;
     color: #000;
     text-align: left;
     line-height: 1.05;
+    letter-spacing: 0.04em;
     word-break: break-word;
     max-width: 100%;
     transition: font-size 0.2s ease;
@@ -427,7 +428,7 @@ input[type="text"]:focus {
 
 .badge-title {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     color: #1e293b;
     margin-top: 3px;
     font-weight: 700;
@@ -436,7 +437,7 @@ input[type="text"]:focus {
 
 .badge-pronouns {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     color: #475569;
     margin-top: 2px;
     font-weight: 600;
