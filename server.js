@@ -119,7 +119,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, error: 'An unexpected error occurred.' });
 });
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`\n🏷️  Badge Printer Kiosk`);
   console.log(`   Open: http://localhost:${port}`);
   console.log(`   Printer: ${PRINTER_NAME}`);
