@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const pronounChips = document.querySelectorAll('.pronoun-chip');
     const iconGrid = document.getElementById('iconGrid');
     const maxError = document.getElementById('maxError');
+
+    const bookGenresSection = document.getElementById('bookGenresSection');
+    const genreChips = document.querySelectorAll('.genre-chip');
+    const customGenreInput = document.getElementById('customGenre');
+    const previewGenres = document.getElementById('previewGenres');
     
     const previewName = document.getElementById('previewName');
     const previewPronouns = document.getElementById('previewPronouns');
@@ -36,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let selectedIcons = new Set();
     let selectedPronouns = new Set();
+    let selectedGenres = new Set();
     const MAX_ICONS = 6;
 
     // Initialize Pronouns Chip Selection
@@ -53,6 +59,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Initialize Book Genre Chip Selection
+    genreChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const val = chip.dataset.value;
+            if (selectedGenres.has(val)) {
+                selectedGenres.delete(val);
+                chip.classList.remove('selected');
+            } else {
+                selectedGenres.add(val);
+                chip.classList.add('selected');
+            }
+            updatePreview();
+        });
+    });
+
     // Helper to get formatted combined pronouns
     function getCombinedPronouns() {
         const chipList = Array.from(selectedPronouns);
@@ -61,6 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
             chipList.push(customText);
         }
         return chipList.join(', ');
+    }
+
+    // Helper to get formatted combined book genres
+    function getCombinedGenres() {
+        const chipList = Array.from(selectedGenres);
+        const customText = customGenreInput ? customGenreInput.value.trim() : '';
+        if (customText) {
+            chipList.push(customText);
+        }
+        return chipList.length > 0 ? `Books: ${chipList.join(', ')}` : '';
     }
 
     // Helper for robust icon path resolution across localhost & GitHub Pages (handles missing trailing slashes)
@@ -117,6 +148,15 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedIcons.add(id);
             btnElement.classList.add('selected');
         }
+
+        // Show or hide book genres sub-selection if Books icon is toggled
+        if (bookGenresSection) {
+            if (selectedIcons.has('books')) {
+                bookGenresSection.classList.remove('hidden');
+            } else {
+                bookGenresSection.classList.add('hidden');
+            }
+        }
         
         updateGridState();
         updatePreview();
@@ -136,10 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = firstNameInput.value.trim();
         const pronouns = getCombinedPronouns();
         const title = titleInput.value.trim();
+        const genres = selectedIcons.has('books') ? getCombinedGenres() : '';
 
         previewName.textContent = name || '';
         previewPronouns.textContent = pronouns;
         previewTitle.textContent = title;
+        if (previewGenres) {
+            previewGenres.textContent = genres;
+        }
 
         // Auto-scale font for long names
         if (name.length > 8) {
@@ -171,6 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (customPronounsInput) {
         customPronounsInput.addEventListener('input', updatePreview);
     }
+    if (customGenreInput) {
+        customGenreInput.addEventListener('input', updatePreview);
+    }
 
     // Enter key to print
     document.addEventListener('keydown', (e) => {
@@ -193,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = firstNameInput.value.trim();
         const pronouns = getCombinedPronouns();
         const title = titleInput.value.trim();
+        const genres = selectedIcons.has('books') ? getCombinedGenres() : '';
         const icons = Array.from(selectedIcons);
 
         if (!name) return;
@@ -205,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const iconUrls = icons.map(id => getIconUrl(id));
 
             // Render the entire badge as a bitmap and convert to ZPL
-            const zpl = await renderBadgeToZPL({ name, pronouns, title, iconUrls });
+            const zpl = await renderBadgeToZPL({ name, pronouns, title, genres, iconUrls });
 
             // Determine print endpoint (local vs GitHub Pages)
             const printApiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')

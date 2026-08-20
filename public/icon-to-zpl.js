@@ -61,7 +61,7 @@ function pixelsToZPLGF(imageData, width, height, posX, posY) {
  * @param {string[]} [options.iconUrls] - Array of icon image URLs
  * @returns {Promise<string>} Complete ZPL string ready to send to printer
  */
-async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
+async function renderBadgeToZPL({ name, pronouns, title, genres, iconUrls = [] }) {
   const canvas = document.createElement('canvas');
   canvas.width = BADGE_WIDTH;
   canvas.height = BADGE_HEIGHT;
@@ -78,6 +78,7 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
 
   const hasPronouns = pronouns && pronouns.trim() !== '';
   const hasTitle = title && title.trim() !== '';
+  const hasGenres = genres && genres.trim() !== '';
   const hasIcons = iconUrls.length > 0;
 
   ctx.fillStyle = 'black';
@@ -117,13 +118,25 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
     }
   }
 
+  let genresFontSize = Math.max(12, Math.floor(nameFontSize * 0.30));
+  if (hasGenres) {
+    ctx.font = `600 ${genresFontSize}px "${BADGE_FONT}", sans-serif`;
+    let genresMetrics = ctx.measureText(genres);
+    while (genresMetrics.width > maxAvailableWidth && genresFontSize > 10) {
+      genresFontSize -= 1;
+      ctx.font = `600 ${genresFontSize}px "${BADGE_FONT}", sans-serif`;
+      genresMetrics = ctx.measureText(genres);
+    }
+  }
+
   // Vertical layout math
   const nameBlockHeight = nameFontSize;
   const pronounsBlockHeight = hasPronouns ? pronounsFontSize + 2 : 0;
   const titleBlockHeight = hasTitle ? titleFontSize + 2 : 0;
+  const genresBlockHeight = hasGenres ? genresFontSize + 2 : 0;
   const iconBlockHeight = hasIcons ? 28 + 4 : 0;
 
-  const totalContentHeight = nameBlockHeight + pronounsBlockHeight + titleBlockHeight + iconBlockHeight;
+  const totalContentHeight = nameBlockHeight + pronounsBlockHeight + titleBlockHeight + genresBlockHeight + iconBlockHeight;
 
   let nameY = Math.floor((BADGE_HEIGHT - totalContentHeight) / 2);
   nameY = Math.max(8, nameY);
@@ -149,6 +162,14 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
     ctx.font = `600 ${pronounsFontSize}px "${BADGE_FONT}", sans-serif`;
     ctx.fillText(pronouns, leftMargin + 1, currentY);
     currentY += pronounsFontSize + 2;
+  }
+
+  // Draw genres
+  if (hasGenres) {
+    ctx.fillStyle = '#475569';
+    ctx.font = `600 ${genresFontSize}px "${BADGE_FONT}", sans-serif`;
+    ctx.fillText(genres, leftMargin + 1, currentY);
+    currentY += genresFontSize + 2;
   }
 
   // Draw icons

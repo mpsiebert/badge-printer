@@ -204,9 +204,63 @@ input[type="text"]:focus {
     box-shadow: var(--brutal-shadow);
 }
 
-.custom-pronouns-input {
-    height: 38px !important;
-    font-size: 0.85rem !important;
+.hidden {
+    display: none !important;
+}
+
+.book-genres-section {
+    margin-top: 12px;
+    padding: 10px;
+    background: var(--navy-50);
+    border: var(--brutal-border);
+    border-radius: 10px;
+    box-shadow: var(--brutal-shadow);
+}
+
+.genre-chips-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.genre-chip {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: var(--brutal-border);
+    box-shadow: 2px 2px 0px #1e293b;
+    background: #ffffff;
+    color: var(--navy-800);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.12s ease;
+}
+
+.genre-chip:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--navy-800);
+}
+
+.genre-chip.selected {
+    background: var(--mlh-yellow);
+    color: var(--navy-800);
+    box-shadow: 2px 2px 0px var(--navy-800);
+}
+
+.custom-genre-input {
+    height: 36px !important;
+    font-size: 0.82rem !important;
+}
+
+.badge-genres {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.7rem;
+    color: #475569;
+    margin-top: 1px;
+    font-weight: 600;
+    text-align: left;
 }
 
 .interests-section {

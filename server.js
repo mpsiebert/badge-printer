@@ -83,7 +83,10 @@ app.post('/api/print', (req, res) => {
     }
     
     // Pipe ZPL directly to lp via stdin
-    const lp = spawn('lp', ['-d', PRINTER_NAME, '-o', 'raw']);
+    const lpBin = fs.existsSync('/usr/bin/lp') ? '/usr/bin/lp' : 'lp';
+    const lp = spawn(lpBin, ['-d', PRINTER_NAME, '-o', 'raw'], {
+      env: { ...process.env, PATH: '/usr/bin:/bin:/usr/sbin:/sbin:' + (process.env.PATH || '') }
+    });
     
     let stderr = '';
     lp.stderr.on('data', (data) => { stderr += data.toString(); });
