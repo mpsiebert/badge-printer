@@ -4,7 +4,7 @@
  * Optimized for 2" x 1" Direct Thermal Labels (DT21-15PDT)
  * 
  * Badge: 2" x 1" at 203 dpi = 406 x 203 dots
- * Layout: Large text on left with letter spacing, stacked icons vertically on right edge.
+ * Layout: Large text on left with letter spacing, max 3 larger stacked icons vertically on right edge.
  */
 
 const BADGE_WIDTH = 406;
@@ -78,16 +78,16 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
 
   // Layout config for 2" x 1" (406 x 203)
   const leftMargin = 16;
-  const iconSize = 34;
-  const iconGap = 6;
-  const reservedRightWidth = hasIcons ? (iconSize + 20) : 16;
+  const iconSize = 42;
+  const iconGap = 8;
+  const reservedRightWidth = hasIcons ? (iconSize + 22) : 16;
   const maxAvailableWidth = BADGE_WIDTH - leftMargin - reservedRightWidth;
 
   ctx.fillStyle = 'black';
   ctx.textBaseline = 'top';
 
   // --- Auto-size Name with Letter Spacing ---
-  let nameFontSize = 84;
+  let nameFontSize = 82;
   if ('letterSpacing' in ctx) {
     ctx.letterSpacing = '2px';
   }
@@ -127,10 +127,10 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
     }
   }
 
-  // Vertical layout math for left column text
+  // Vertical layout math for left column text with generous spacing
   const nameBlockHeight = nameFontSize;
-  const titleBlockHeight = hasTitle ? titleFontSize + 4 : 0;
-  const pronounsBlockHeight = hasPronouns ? pronounsFontSize + 4 : 0;
+  const titleBlockHeight = hasTitle ? titleFontSize + 8 : 0;
+  const pronounsBlockHeight = hasPronouns ? pronounsFontSize + 8 : 0;
 
   const totalTextHeight = nameBlockHeight + titleBlockHeight + pronounsBlockHeight;
 
@@ -149,14 +149,14 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
     ctx.letterSpacing = '0px';
   }
 
-  let currentY = nameY + nameFontSize + 2;
+  let currentY = nameY + nameFontSize + 8;
 
   // Draw Hackathon / Community
   if (hasTitle) {
     ctx.fillStyle = '#1e293b';
     ctx.font = `700 ${titleFontSize}px "${BADGE_FONT}", sans-serif`;
     ctx.fillText(title, leftMargin + 1, currentY);
-    currentY += titleFontSize + 4;
+    currentY += titleFontSize + 8;
   }
 
   // Draw pronouns
@@ -164,14 +164,14 @@ async function renderBadgeToZPL({ name, pronouns, title, iconUrls = [] }) {
     ctx.fillStyle = '#475569';
     ctx.font = `600 ${pronounsFontSize}px "${BADGE_FONT}", sans-serif`;
     ctx.fillText(pronouns, leftMargin + 1, currentY);
-    currentY += pronounsFontSize + 4;
+    currentY += pronounsFontSize + 8;
   }
 
-  // --- Draw icons stacked vertically down the right edge ---
+  // --- Draw icons (max 3) stacked vertically down the right edge ---
   if (hasIcons) {
-    const numIcons = Math.min(iconUrls.length, 4);
+    const numIcons = Math.min(iconUrls.length, 3);
     const totalIconsHeight = numIcons * iconSize + (numIcons - 1) * iconGap;
-    let iconY = Math.max(10, Math.floor((BADGE_HEIGHT - totalIconsHeight) / 2));
+    let iconY = Math.max(8, Math.floor((BADGE_HEIGHT - totalIconsHeight) / 2));
     const iconX = BADGE_WIDTH - 14 - iconSize;
 
     for (let i = 0; i < numIcons; i++) {
