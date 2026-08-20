@@ -322,7 +322,7 @@ input[type="text"]:focus {
 
 .badge-preview-container {
     width: 100%;
-    aspect-ratio: 4 / 2;
+    aspect-ratio: 2 / 1;
     background: var(--navy-50);
     border-radius: 12px;
     border: var(--brutal-border);
@@ -343,7 +343,7 @@ input[type="text"]:focus {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 18px;
+    padding: 12px;
     position: relative;
     overflow: hidden;
 }
@@ -354,12 +354,12 @@ input[type="text"]:focus {
     align-items: flex-start;
     justify-content: center;
     flex-grow: 1;
-    padding-left: 4px;
+    padding-left: 2px;
 }
 
 .badge-name {
     font-family: 'Open Sans', sans-serif;
-    font-size: 2.6rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: #000;
     text-align: left;
@@ -371,18 +371,18 @@ input[type="text"]:focus {
 
 .badge-title {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.75rem;
     color: #334155;
-    margin-top: 2px;
+    margin-top: 1px;
     font-weight: 600;
     text-align: left;
 }
 
 .badge-pronouns {
     font-family: 'Open Sans', sans-serif;
-    font-size: 1rem;
+    font-size: 0.75rem;
     color: #555;
-    margin-top: 2px;
+    margin-top: 1px;
     font-weight: 600;
     text-align: left;
 }
@@ -390,14 +390,14 @@ input[type="text"]:focus {
 .badge-icons {
     display: flex;
     justify-content: flex-start;
-    gap: 10px;
-    height: 28px;
-    padding-left: 4px;
+    gap: 6px;
+    height: 20px;
+    padding-left: 2px;
 }
 
 .badge-icon-item {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     background: transparent;
     border: none;
     display: flex;
@@ -406,8 +406,8 @@ input[type="text"]:focus {
 }
 
 .badge-icon-item img {
-    width: 26px;
-    height: 26px;
+    width: 18px;
+    height: 18px;
     object-fit: contain;
 }
 
